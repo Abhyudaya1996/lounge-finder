@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import Lottie from 'lottie-react';
 
-const REMOTE_LOTTIE_URL = 'https://assets7.lottiefiles.com/packages/lf20_ypm1rt0y.json';
+const LOCAL_ASSET_PATH = '/assets/globe-plane.json';
 
 const GlobeAnimation = () => {
   const [animationData, setAnimationData] = useState<Record<string, unknown> | null>(null);
@@ -9,7 +9,7 @@ const GlobeAnimation = () => {
   useEffect(() => {
     const fetchAnimation = async () => {
       try {
-        const res = await fetch(REMOTE_LOTTIE_URL);
+        const res = await fetch(LOCAL_ASSET_PATH);
         const json = await res.json();
         setAnimationData(json);
       } catch {
