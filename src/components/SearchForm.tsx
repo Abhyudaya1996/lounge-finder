@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
   Box,
@@ -6,24 +6,40 @@ import {
   Autocomplete,
   Button,
   Stack,
+  CircularProgress,
 } from '@mui/material';
 import SearchIcon from '@mui/icons-material/Search';
-
-// Temporary mock data. Replace with API data via React-Query.
-const cards = [
-  { label: 'HDFC Bank Diners Club', id: 'card1' },
-  { label: 'SBI Card Elite', id: 'card2' },
-];
-
-const airports = [
-  { label: 'DEL - Delhi Indira Gandhi International', code: 'DEL' },
-  { label: 'BOM - Mumbai Chhatrapati Shivaji', code: 'BOM' },
-];
+import { supabase } from '../supabaseClient';
 
 const SearchForm = () => {
   const [card, setCard] = useState<{ label: string; id: string } | null>(null);
   const [airport, setAirport] = useState<{ label: string; code: string } | null>(null);
+  const [cards, setCards] = useState<{ label: string; id: string }[]>([]);
+  const [airports, setAirports] = useState<{ label: string; code: string }[]>([]);
+  const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
+
+  useEffect(() => {
+    const fetchData = async () => {
+      setLoading(true);
+      // Fetch cards
+      const { data: cardData } = await supabase
+        .from('cards')
+        .select('id, name');
+      // Fetch airports
+      const { data: airportData } = await supabase
+        .from('airports')
+        .select('code, name, city');
+      setCards(
+        (cardData || []).map((c: any) => ({ label: c.name, id: c.id }))
+      );
+      setAirports(
+        (airportData || []).map((a: any) => ({ label: `${a.code} - ${a.name} (${a.city})`, code: a.code }))
+      );
+      setLoading(false);
+    };
+    fetchData();
+  }, []);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -43,23 +59,25 @@ const SearchForm = () => {
           options={cards}
           value={card}
           onChange={(_, newValue) => setCard(newValue)}
+          loading={loading}
           renderInput={(params) => (
-            <TextField {...params} label="Enter or select your credit card" />
+            <TextField {...params} label="Enter or select your credit card" InputProps={{ ...params.InputProps, endAdornment: loading ? <CircularProgress color="inherit" size={20} /> : params.InputProps.endAdornment }} />
           )}
         />
         <Autocomplete
           options={airports}
           value={airport}
           onChange={(_, newValue) => setAirport(newValue)}
+          loading={loading}
           renderInput={(params) => (
-            <TextField {...params} label="Enter your city or airport" />
+            <TextField {...params} label="Enter your city or airport" InputProps={{ ...params.InputProps, endAdornment: loading ? <CircularProgress color="inherit" size={20} /> : params.InputProps.endAdornment }} />
           )}
         />
         <Button
           type="submit"
           variant="contained"
           endIcon={<SearchIcon />}
-          disabled={!card && !airport}
+          disabled={!card && !airport || loading}
           sx={{ alignSelf: 'flex-start' }}
         >
           Check Lounge Access
