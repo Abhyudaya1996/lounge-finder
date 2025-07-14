@@ -1,6 +1,8 @@
-# Welcome to your Lovable project
+# Lounge Genius - Find Your Perfect Airport Lounge
 
-## Project info
+## Project Overview
+
+**Lounge Genius** is a comprehensive airport lounge finder that helps users discover lounges they can access with their credit cards, or find the best cards for their travel destinations.
 
 **URL**: https://lovable.dev/projects/2b6b0354-035f-4212-ac33-a88631529443
 

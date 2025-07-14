@@ -4,9 +4,10 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import LoungePage from './LoungePage';
+import { Lounge } from '@/types/lounge';
 
 interface SearchResultsProps {
-  results: any[];
+  results: Lounge[];
   searchType: 'card' | 'city' | 'network' | 'multi';
   searchQuery: string;
   selectedCard?: string;
@@ -26,7 +27,7 @@ const SearchResults: React.FC<SearchResultsProps> = ({
   eligibleCards = [],
   onBack 
 }) => {
-  const [selectedLounge, setSelectedLounge] = useState<any>(null);
+  const [selectedLounge, setSelectedLounge] = useState<Lounge | null>(null);
 
   // Scroll to top when component mounts or results change
   React.useEffect(() => {
@@ -34,7 +35,7 @@ const SearchResults: React.FC<SearchResultsProps> = ({
   }, [results]);
 
   if (selectedLounge) {
-    return <LoungePage lounge={selectedLounge} onBack={() => setSelectedLounge(null)} />;
+    return <LoungePage lounge={selectedLounge} onBack={() => setSelectedLounge(null)} searchedCard={selectedCard} />;
   }
 
   // Helper function to get a fallback image
@@ -69,6 +70,20 @@ const SearchResults: React.FC<SearchResultsProps> = ({
       return `Lounges that accept ${selectedNetwork} network cards:`;
     }
   };
+
+  function generateStarRating(rating: number, reviewCount: number) {
+    const filledStars = Math.floor(rating);
+    const halfStar = rating % 1 >= 0.5;
+    const emptyStars = 5 - filledStars - (halfStar ? 1 : 0);
+    return (
+      <span className="flex items-center gap-1 text-yellow-500 font-semibold text-sm">
+        <span className="text-gray-900 font-bold mr-1">{rating?.toFixed(1)}</span>
+        {Array.from({ length: filledStars }).map((_, i) => <span key={i}>★</span>)}
+        {halfStar && <span>☆</span>}
+        {Array.from({ length: emptyStars }).map((_, i) => <span key={i + 10}>☆</span>)}
+      </span>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-amber-50">
@@ -151,10 +166,11 @@ const SearchResults: React.FC<SearchResultsProps> = ({
                           <span className="font-semibold text-gray-800">{cardName}</span>
                         </div>
                         <Button 
-                          className="bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white font-semibold px-6 py-2 rounded-full shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105 animate-pulse"
+                          className="apply-now-btn shimmer bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white font-semibold px-6 py-2 rounded-full shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105"
+                          style={{ position: 'relative', overflow: 'hidden', animationDuration: '2.5s', minWidth: 120 }}
                           onClick={() => window.open(`https://www.google.com/search?q=${encodeURIComponent(cardName + ' credit card apply online')}`, '_blank')}
                         >
-                          Apply Now
+                          <span style={{ position: 'relative', zIndex: 2 }}>Apply Now</span>
                         </Button>
                       </div>
                     ))}
@@ -199,26 +215,18 @@ const SearchResults: React.FC<SearchResultsProps> = ({
                     alt={lounge.name}
                     className="w-full h-full object-cover"
                     onError={(e) => {
-                      console.log(`Image failed to load for ${lounge.name}: ${lounge.image}`);
                       (e.target as HTMLImageElement).src = getFallbackImage();
                     }}
-                    onLoad={() => {
-                      console.log(`Image loaded successfully for ${lounge.name}: ${lounge.image}`);
-                    }}
                   />
-                  <div className="absolute top-3 right-3">
-                    <Badge className="bg-white/90 text-gray-800 font-medium">
-                      <Star className="w-3 h-3 mr-1 fill-current text-yellow-500" />
-                      {lounge.rating}
-                    </Badge>
-                  </div>
                 </div>
                 
                 <CardContent className="p-6">
                   <h3 className="text-xl font-bold text-gray-900 mb-2">{lounge.name}</h3>
+                  {/* Google-style rating display */}
+                  {generateStarRating(lounge.google_rating, lounge.google_reviews)}
                   <div className="flex items-center text-gray-600 mb-4">
                     <MapPin className="w-4 h-4 mr-2" />
-                    <span className="text-sm">{lounge.airport} • {lounge.city}, {lounge.state}</span>
+                    <span className="text-sm">{lounge.terminal} • {lounge.airport} • {lounge.city}, {lounge.state}</span>
                   </div>
                   
                   <div className="flex items-center text-sm text-gray-500 mb-4">

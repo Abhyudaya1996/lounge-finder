@@ -54,19 +54,15 @@ export const fetchLoungeData = async (): Promise<LoungeFetchResult> => {
     const eligibleCards = loungeRelations.map((rel: any) => rel.card_name || 'Unknown Card');
     const networks = [...new Set(loungeRelations.map((rel: any) => rel.network).filter(Boolean))];
 
-    // Use the uploaded lounge image as default
-    const getDefaultLoungeImage = () => {
-      return '/lovable-uploads/e54585c7-7f5f-4ac5-9085-1e462e89b9e2.png';
-    };
+    // --- NEW LOGIC FOR IMAGES ---
+    const loungeId = lounge.Lounge_Id;
+    const defaultImage = '/lovable-uploads/e54585c7-7f5f-4ac5-9085-1e462e89b9e2.png';
+    const firstImage = `/lovable-uploads/lounge_${loungeId}_1.jpg`;
+    
+    // For the detail page, we will try up to 10 images per lounge
+    const allImages = Array.from({ length: 10 }, (_, i) => `/lovable-uploads/lounge_${loungeId}_${i + 1}.jpg`);
 
-    const imageUrl = lounge['Lounge Photos'] && 
-                    lounge['Lounge Photos'] !== '' && 
-                    lounge['Lounge Photos'] !== 'null' && 
-                    lounge['Lounge Photos'] !== null
-                    ? lounge['Lounge Photos'] 
-                    : getDefaultLoungeImage();
-
-    console.log(`Lounge ${lounge['Lounge Name']} - Original image: ${lounge['Lounge Photos']}, Final image: ${imageUrl}`);
+    console.log(`Lounge ${lounge['Lounge Name']} - ID: ${loungeId}, First image: ${firstImage}`);
 
     return {
       id: lounge.Lounge_Id,
@@ -74,6 +70,7 @@ export const fetchLoungeData = async (): Promise<LoungeFetchResult> => {
       airport: lounge['Airport Name'] || 'Unknown Airport',
       city: lounge.City || 'Unknown City',
       state: lounge.State || 'Unknown State',
+      terminal: lounge.terminal || lounge.Terminal || 'Not specified',
       location: lounge['Location (Terminal, Concourse, Gate, Floor)'] || 'Location not specified',
       hours: lounge['Opening Hours'] || '24 hours',
       amenities: ['Wi-Fi', 'Food & Beverages', 'Comfortable Seating'], // Default amenities
@@ -81,9 +78,18 @@ export const fetchLoungeData = async (): Promise<LoungeFetchResult> => {
       paidAccess: lounge['Paid Access Fee'],
       rating: lounge['User Ratings'] || '4.0',
       reviews: '100+',
-      image: imageUrl,
+      image: firstImage, // Use the first image for main listing
+      allImages,         // Array of possible images for the carousel
       eligibleCards,
-      networks
+      networks,
+      mapLink: lounge['map_link'],
+      contactNo: lounge['phone_number'],
+      website: lounge['website'],
+      google_rating: lounge['google_rating'],
+      google_reviews: lounge['google_reviews'],
+      google_address: lounge['google_address'],
+      map_link_new: lounge['map_link_new'],
+      email: lounge['email'],
     };
   }) || [];
 

@@ -5,6 +5,7 @@ export interface Lounge {
   airport: string;
   city: string;
   state: string;
+  terminal: string;
   location: string;
   hours: string;
   amenities: string[];
@@ -13,8 +14,17 @@ export interface Lounge {
   rating: string;
   reviews: string;
   image: string;
+  allImages: string[]; // Array of all images for carousel
   eligibleCards: string[];
   networks: string[];
+  mapLink?: string;
+  contactNo?: string;
+  website?: string;
+  google_rating?: number;
+  google_reviews?: number;
+  google_address?: string;
+  map_link_new?: string;
+  email?: string;
 }
 
 export interface CreditCard {

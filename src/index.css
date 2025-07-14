@@ -181,3 +181,68 @@ html {
 .text-balance {
   text-wrap: balance;
 }
+
+/* Shimmer animation for Apply Now button */
+.shimmer {
+  position: relative;
+  overflow: hidden;
+}
+.shimmer::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -75%;
+  width: 50%;
+  height: 100%;
+  background: linear-gradient(90deg, rgba(255,255,255,0) 0%, rgba(255,255,255,0.4) 50%, rgba(255,255,255,0) 100%);
+  animation: shimmer-move 1.5s infinite;
+  z-index: 1;
+}
+@keyframes shimmer-move {
+  100% {
+    left: 125%;
+  }
+}
+
+/* Shimmer animation for Apply Now button */
+.shimmer-bg {
+  position: absolute;
+  top: 0;
+  left: -75%;
+  width: 50%;
+  height: 100%;
+  background: linear-gradient(90deg, rgba(255,255,255,0) 0%, rgba(255,255,255,0.25) 50%, rgba(255,255,255,0) 100%);
+  animation: shimmer-move 2.5s infinite;
+  z-index: 1;
+  pointer-events: none;
+}
+@keyframes shimmer-move {
+  100% {
+    left: 125%;
+  }
+}
+
+/* Fix for Apply Now button span in lounge details */
+#root > div.min-h-screen.bg-gradient-to-br.from-blue-50.via-white.to-amber-50 > div > div.text-center.py-16 > div > div.mb-8 > div > div:nth-child(1) > button > span {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 600;
+  font-size: 1rem;
+  letter-spacing: 0.01em;
+  padding: 0.25rem 0.75rem;
+  border-radius: 9999px;
+  background: none;
+  box-shadow: none;
+  position: relative;
+  z-index: 2;
+}
+
+/* Global Apply Now button style for consistency */
+.apply-now-btn {
+  max-width: 120px;
+  font-size: 14px !important;
+}
+.apply-now-btn > span {
+  font-size: 14px !important;
+}
