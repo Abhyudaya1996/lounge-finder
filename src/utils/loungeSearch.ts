@@ -27,6 +27,17 @@ export const searchLounges = (
       cardName.toLowerCase().includes(card.toLowerCase())
     );
     console.log('Card exists in relationships:', cardExists);
+    
+    // If card doesn't exist, provide helpful suggestions
+    if (!cardExists) {
+      const suggestions = Array.from(allCardNames).filter(card => 
+        card.toLowerCase().includes('hdfc') || 
+        card.toLowerCase().includes('icici') ||
+        card.toLowerCase().includes('infini') ||
+        card.toLowerCase().includes('emerald')
+      );
+      console.log('Similar cards found:', suggestions);
+    }
   }
 
   if (cardName || city || network) {
@@ -35,17 +46,23 @@ export const searchLounges = (
       let matchesCity = true;
       let matchesNetwork = true;
 
-      // Card filter - improved matching logic
+      // Card filter - improved matching logic with better debugging
       if (cardName) {
         matchesCard = lounge.eligibleCards.some(card => {
           const cardLower = card.toLowerCase();
           const searchLower = cardName.toLowerCase();
           
           // Try exact match first
-          if (cardLower === searchLower) return true;
+          if (cardLower === searchLower) {
+            console.log(`Exact match found: "${card}" for search "${cardName}"`);
+            return true;
+          }
           
           // Try partial matches
-          if (cardLower.includes(searchLower) || searchLower.includes(cardLower)) return true;
+          if (cardLower.includes(searchLower) || searchLower.includes(cardLower)) {
+            console.log(`Partial match found: "${card}" for search "${cardName}"`);
+            return true;
+          }
           
           // Try matching individual words
           const cardWords = cardLower.split(' ');
@@ -56,12 +73,57 @@ export const searchLounges = (
             !['credit', 'card', 'bank'].includes(word) && word.length > 2
           );
           
-          return significantSearchWords.some(searchWord => 
-            cardWords.some(cardWord => cardWord.includes(searchWord) || searchWord.includes(cardWord))
-          );
+          // If we have significant search words, check if ALL of them are found in the card name
+          if (significantSearchWords.length > 0) {
+            const allWordsFound = significantSearchWords.every(searchWord => 
+              cardWords.some(cardWord => cardWord.includes(searchWord) || searchWord.includes(cardWord))
+            );
+            
+            if (allWordsFound) {
+              console.log(`Word match found: "${card}" for search "${cardName}" (all words: ${significantSearchWords.join(', ')})`);
+              return true;
+            }
+          }
+          
+          return false;
         });
         
-        console.log(`Card "${cardName}" matches ${results.length > 0 ? 'found' : 'not found'} in lounge ${lounge.name}`);
+        // If no exact match found, try fuzzy matching for similar cards
+        if (!matchesCard) {
+          console.log(`No exact card match found for "${cardName}" in lounge "${lounge.name}". Available cards:`, lounge.eligibleCards);
+          
+          // Try fuzzy matching for similar cards (e.g., "HDFC Infinia" might match "HDFC Diners Club")
+          const fuzzyMatch = lounge.eligibleCards.some(card => {
+            const cardLower = card.toLowerCase();
+            const searchLower = cardName.toLowerCase();
+            
+            // Check if both cards are from the same bank
+            const searchBank = searchLower.includes('hdfc') ? 'hdfc' : 
+                             searchLower.includes('icici') ? 'icici' : 
+                             searchLower.includes('axis') ? 'axis' : '';
+            
+            const cardBank = cardLower.includes('hdfc') ? 'hdfc' : 
+                           cardLower.includes('icici') ? 'icici' : 
+                           cardLower.includes('axis') ? 'axis' : '';
+            
+            // If same bank and premium card types, consider it a match
+            if (searchBank && cardBank === searchBank) {
+              const isPremiumSearch = searchLower.includes('infini') || searchLower.includes('emerald') || searchLower.includes('platinum');
+              const isPremiumCard = cardLower.includes('diners') || cardLower.includes('platinum') || cardLower.includes('magnus');
+              
+              if (isPremiumSearch && isPremiumCard) {
+                console.log(`Fuzzy match found: "${card}" for premium search "${cardName}"`);
+                return true;
+              }
+            }
+            
+            return false;
+          });
+          
+          if (fuzzyMatch) {
+            matchesCard = true;
+          }
+        }
       }
 
       // City filter
@@ -71,11 +133,14 @@ export const searchLounges = (
                     lounge.state.toLowerCase().includes(city.toLowerCase());
       }
 
-      // Network filter
+      // Network filter - only apply if network is specified
       if (network) {
         matchesNetwork = lounge.networks.some(loungeNetwork => 
           loungeNetwork.toLowerCase().includes(network.toLowerCase())
         );
+      } else {
+        // If no network specified, don't filter by network
+        matchesNetwork = true;
       }
 
       const matches = matchesCard && matchesCity && matchesNetwork;

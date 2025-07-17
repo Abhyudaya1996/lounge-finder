@@ -324,22 +324,22 @@ const Index = () => {
                 <p className="text-sm text-gray-500 mb-4 text-center">Popular searches:</p>
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
                   <button 
-                    onClick={() => setSelectedCard('HDFC Diners Club')}
+                    onClick={() => setSelectedCard('HDFC Infinia')}
                     className="px-3 py-2 bg-blue-50 text-blue-600 rounded-lg text-sm hover:bg-blue-100 transition-colors"
                   >
-                    HDFC Diners Club
+                    HDFC Infinia
+                  </button>
+                  <button 
+                    onClick={() => setSelectedCard('ICICI Emerald')}
+                    className="px-3 py-2 bg-blue-50 text-blue-600 rounded-lg text-sm hover:bg-blue-100 transition-colors"
+                  >
+                    ICICI Emerald
                   </button>
                   <button 
                     onClick={() => setSelectedCity('Mumbai')}
                     className="px-3 py-2 bg-amber-50 text-amber-600 rounded-lg text-sm hover:bg-amber-100 transition-colors"
                   >
                     Mumbai
-                  </button>
-                  <button 
-                    onClick={() => setSelectedNetwork('Visa')}
-                    className="px-3 py-2 bg-green-50 text-green-600 rounded-lg text-sm hover:bg-green-100 transition-colors"
-                  >
-                    Visa Network
                   </button>
                   <button 
                     onClick={() => setSelectedCity('Delhi')}

@@ -35,14 +35,30 @@ export const fetchLoungeData = async (): Promise<LoungeFetchResult> => {
 
   console.log('Raw cards data:', cardsData);
 
-  // Fetch card-lounge relationships
-  const { data: cardLoungeData, error: cardLoungeError } = await supabase
-    .from('cards_lounge')
-    .select('*');
+  // Fetch card-lounge relationships - fetch all rows with proper pagination
+  let cardLoungeData: any[] = [];
+  let from = 0;
+  const pageSize = 1000;
+  let hasMore = true;
 
-  if (cardLoungeError) {
-    console.error('Card-lounge relationship fetch error:', cardLoungeError);
-    throw cardLoungeError;
+  while (hasMore) {
+    const { data: pageData, error: pageError } = await supabase
+      .from('cards_lounge')
+      .select('*')
+      .range(from, from + pageSize - 1);
+
+    if (pageError) {
+      console.error('Card-lounge relationship fetch error:', pageError);
+      throw pageError;
+    }
+
+    if (pageData && pageData.length > 0) {
+      cardLoungeData = [...cardLoungeData, ...pageData];
+      from += pageSize;
+      hasMore = pageData.length === pageSize;
+    } else {
+      hasMore = false;
+    }
   }
 
   console.log('Raw card-lounge data:', cardLoungeData);

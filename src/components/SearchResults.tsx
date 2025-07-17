@@ -140,7 +140,9 @@ const SearchResults: React.FC<SearchResultsProps> = ({
               <h2 className="text-2xl font-bold text-gray-900 mb-4">No lounges found</h2>
               <p className="text-gray-600 mb-8 max-w-md mx-auto">
                 {searchType === 'card' 
-                  ? "Sorry, no lounges available with this card. But you can unlock access with these cards:"
+                  ? selectedCard?.toLowerCase().includes('infini') || selectedCard?.toLowerCase().includes('emerald')
+                    ? `"${selectedCard}" might not be in our database yet, but these premium cards offer similar lounge access:`
+                    : "Sorry, no lounges available with this card. But you can unlock access with these cards:"
                   : "No lounges found matching your search criteria."
                 }
               </p>
@@ -148,6 +150,7 @@ const SearchResults: React.FC<SearchResultsProps> = ({
               {/* Show eligible cards for all search types when no lounges found */}
               {eligibleCards.length > 0 && (
                 <div className="mb-8">
+                  <div className="mb-8">
                    <h3 className="text-lg font-semibold text-gray-800 mb-4">
                      {searchType === 'card' 
                        ? `Cards that give you lounge access${selectedLocation ? ` at ${selectedLocation}` : ''}:`
@@ -190,6 +193,7 @@ const SearchResults: React.FC<SearchResultsProps> = ({
                     )}
                   </div>
                 </div>
+              </div>
               )}
               
               <Button onClick={onBack} className="bg-blue-600 hover:bg-blue-700">

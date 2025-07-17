@@ -22,9 +22,10 @@ export const sampleLounges = [
     ],
     eligibleCards: [
       "HDFC Diners Club Black",
+      "HDFC Infinia",
       "American Express Platinum",
       "Axis Magnus",
-      "ICICI Emeralde",
+      "ICICI Emerald",
       "Standard Chartered Ultimate"
     ],
     guestPolicy: "Complimentary for cardholders. Guests can be brought at ₹2,000 per person.",
@@ -53,6 +54,7 @@ export const sampleLounges = [
     ],
     eligibleCards: [
       "HDFC Diners Club Black",
+      "HDFC Infinia",
       "American Express Platinum",
       "Citi Prestige",
       "Axis Magnus",
@@ -82,6 +84,7 @@ export const sampleLounges = [
     ],
     eligibleCards: [
       "HDFC Diners Club",
+      "HDFC Infinia",
       "Axis Magnus",
       "ICICI Sapphiro",
       "Kotak White"
@@ -110,6 +113,7 @@ export const sampleLounges = [
     ],
     eligibleCards: [
       "HDFC Diners Club",
+      "HDFC Infinia",
       "American Express",
       "Axis Bank Cards",
       "Yes Bank Cards"
@@ -138,6 +142,7 @@ export const sampleLounges = [
     ],
     eligibleCards: [
       "HDFC Diners Club",
+      "HDFC Infinia",
       "ICICI Bank Cards",
       "Axis Magnus",
       "Standard Chartered"
@@ -177,11 +182,20 @@ export const sampleCards = [
   },
   {
     id: 4,
-    name: "ICICI Emeralde",
+    name: "ICICI Emerald",
     bank: "ICICI Bank",
     image: "https://images.unsplash.com/photo-1500375592092-40eb2168fd21?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80",
     loungeAccess: "Unlimited domestic and international lounge access",
     annualFee: "₹12,000", 
     features: ["Unlimited lounge access", "Concierge services", "Travel benefits"]
+  },
+  {
+    id: 5,
+    name: "HDFC Infinia",
+    bank: "HDFC Bank",
+    image: "https://images.unsplash.com/photo-1473091534298-04dcbce3278c?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80",
+    loungeAccess: "Unlimited domestic and international lounge access",
+    annualFee: "₹12,500",
+    features: ["Unlimited lounge access", "Premium concierge", "Travel benefits", "Golf privileges"]
   }
 ];
